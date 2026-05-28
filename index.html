@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="Impara il russo per viaggiare in Kirghizistan e Uzbekistan — sessioni da 15 minuti">
+  <meta name="theme-color" content="#378ADD">
+  <title>Russo da Viaggio 🇷🇺</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+  <!-- ═══ HEADER / DASHBOARD ═══════════════════════════════════════════════ -->
+  <header id="app-header">
+    <div class="header-row1">
+      <span class="app-title">🇷🇺 Russo da Viaggio</span>
+      <div class="header-badges">
+        <div id="due-badge" style="display:none">
+          <span id="due-count">0</span> oggi
+        </div>
+        <div class="streak-badge">
+          🔥 <span id="streak-count">0</span>
+        </div>
+      </div>
+    </div>
+    <div class="header-row2">
+      <span id="day-number">Giorno 1 di 65</span>
+      <span id="phase-label">Fase 1</span>
+    </div>
+    <div class="header-progress">
+      <div class="progress-bar">
+        <div id="progress-bar-fill" style="width:0%"></div>
+      </div>
+      <span id="progress-pct">0%</span>
+    </div>
+  </header>
+
+  <!-- ═══ TAB BAR ══════════════════════════════════════════════════════════ -->
+  <nav class="tab-bar" role="tablist" aria-label="Sezioni">
+    <button class="tab-btn active" data-tab="pronuncia" role="tab" aria-selected="true">Pronuncia</button>
+    <button class="tab-btn" data-tab="flashcard" role="tab" aria-selected="false">Flashcard</button>
+    <button class="tab-btn" data-tab="frasi" role="tab" aria-selected="false">Frasi</button>
+    <button class="tab-btn" data-tab="nomade" role="tab" aria-selected="false">Vita Nomade</button>
+    <button class="tab-btn" data-tab="tutor" role="tab" aria-selected="false">Tutor AI</button>
+  </nav>
+
+  <!-- ═══ MAIN CONTENT ═════════════════════════════════════════════════════ -->
+  <main id="main-content">
+    <div id="tab-pronuncia" class="tab-content active" role="tabpanel"></div>
+    <div id="tab-flashcard" class="tab-content" role="tabpanel"></div>
+    <div id="tab-frasi" class="tab-content" role="tabpanel"></div>
+    <div id="tab-nomade" class="tab-content" role="tabpanel"></div>
+    <div id="tab-tutor" class="tab-content" role="tabpanel"></div>
+  </main>
+
+  <!-- ═══ SESSION OVERLAY ══════════════════════════════════════════════════ -->
+  <div id="session-overlay" role="dialog" aria-modal="true" aria-label="Sessione guidata"></div>
+
+  <!-- ═══ SCRIPTS ══════════════════════════════════════════════════════════ -->
+  <script src="src/data.js"></script>
+  <script src="src/sm2.js"></script>
+  <script src="src/tts.js"></script>
+  <script src="src/session.js"></script>
+  <script src="src/tutor.js"></script>
+  <script src="src/app.js"></script>
+
+</body>
+</html>
