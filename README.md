@@ -1,73 +1,64 @@
 # 🇷🇺 Russo da Viaggio
 
-App per imparare il russo orale da viaggiatore — ottimizzata per Kirghizistan e Uzbekistan.
+App **statica** per imparare il russo orale da viaggiatore — ottimizzata per Kirghizistan e Uzbekistan.
 Sessioni da 15-20 minuti al giorno. Partenza da zero assoluto.
 
-## Requisiti
+**Nessun server. Nessuna API key. Nessuna installazione.**
 
-- Node.js 18+
-- npm 8+
-- Chrome (consigliato) per TTS con voce russa nativa
+## Aprire in locale
 
-## Installazione
+Apri direttamente `index.html` nel browser — funziona subito.
 
+Per un'esperienza migliore (TTS russo, nessun problema di path):
+
+**Con VS Code:**
+```
+Installa estensione "Live Server" → tasto destro su index.html → "Open with Live Server"
+```
+
+**Con Python (se ce l'hai):**
 ```bash
-npm install
+python3 -m http.server 8080
+# poi apri http://localhost:8080
 ```
 
-## Configurare la chiave API Anthropic
-
-Il Tutor AI usa Claude via Anthropic API. Imposta la variabile d'ambiente prima di avviare:
-
-**Linux / macOS:**
+**Con Node.js (se ce l'hai):**
 ```bash
-export ANTHROPIC_API_KEY=sk-ant-...
+npx serve .
 ```
 
-**Windows (PowerShell):**
-```powershell
-$env:ANTHROPIC_API_KEY="sk-ant-..."
-```
+## Deploy su Vercel (gratuito, 5 minuti)
 
-Ottieni la chiave su [console.anthropic.com](https://console.anthropic.com).
+1. **Push su GitHub** — se non l'hai ancora fatto:
+   ```bash
+   git add .
+   git commit -m "primo commit"
+   git push
+   ```
 
-> Le sezioni Pronuncia, Flashcard, Frasi e Vita Nomade funzionano senza chiave API.
-> Solo il Tutor AI richiede la connessione a Anthropic.
+2. **Vai su [vercel.com](https://vercel.com)** → "Add New Project"
 
-## Avviare l'app
+3. **Importa il repo GitHub** — Vercel lo rileva automaticamente come sito statico
 
-```bash
-npm start
-```
+4. **Clicca Deploy** — nessuna configurazione necessaria
 
-Il server si avvia su `http://localhost:3000`.
+5. **Apri l'URL** che Vercel ti dà — funziona su qualsiasi dispositivo, ovunque nel mondo
 
-## Aprire nel browser
-
-Apri **Chrome** (o Chromium) e vai su:
-
-```
-http://localhost:3000
-```
-
-Chrome è consigliato perché ha la voce `ru-RU` per il text-to-speech nativa.
+Ogni volta che fai `git push`, Vercel rideploya automaticamente.
 
 ## Note sul TTS (Text-to-Speech)
 
-- **Chrome desktop/mobile**: supporto completo voce `ru-RU` — esperienza migliore
-- **Safari iOS**: voce russa disponibile se installata nelle impostazioni sistema
-- **Firefox**: supporto TTS variabile — alcune voci potrebbero non essere disponibili
-- **Sezione Kirghizo**: il kirghizo non è supportato dai browser; viene usata una voce `ko-KR` come approssimazione fonetica — l'avviso è visibile nell'app
-
-Per abilitare la voce russa su iOS: Impostazioni → Accessibilità → Contenuto parlato → Voci → Russo → scarica la voce.
+- **Chrome** (desktop e mobile): supporto completo voce `ru-RU` — esperienza migliore
+- **Safari iOS**: voce russa disponibile se installata in Impostazioni → Accessibilità → Contenuto parlato → Voci → Russo
+- **Firefox**: supporto variabile
+- **Sezione Kirghizo**: il kirghizo non è supportato dai browser — viene usata una voce di fallback con avviso visibile
 
 ## Struttura del progetto
 
 ```
 russo-da-viaggio/
-├── index.html          # App principale (single-page)
-├── server.js           # Proxy Express per Anthropic API
-├── package.json
+├── index.html          # App principale (single-page, tutto qui)
+├── vercel.json         # Config deploy Vercel (sito statico)
 ├── README.md
 └── src/
     ├── style.css       # Tutti gli stili (mobile-first)
@@ -75,7 +66,6 @@ russo-da-viaggio/
     ├── sm2.js          # Algoritmo SM-2 (spaced repetition)
     ├── tts.js          # Web Speech API wrapper
     ├── session.js      # Sessione guidata + Storage helper
-    ├── tutor.js        # Client Tutor AI
     └── app.js          # Logica principale dell'app
 ```
 
@@ -87,25 +77,10 @@ russo-da-viaggio/
 | 2 | 15–40 | Cibo, bazaar, trasporti, guesthouse |
 | 3 | 41–65 | Conversazione, trattative, vita nomade, emergenze |
 
-## Dati salvati (localStorage)
+## 5 sezioni dell'app
 
-| Chiave | Contenuto |
-|--------|-----------|
-| `russo_start_date` | Data di inizio studio |
-| `russo_cards_progress` | Stato SM-2 per ogni flashcard |
-| `russo_daily_log` | Attività giornaliera |
-| `russo_streak` | Giorni consecutivi di studio |
-| `russo_session_checkpoint` | Stato sessione in corso |
-| `russo_phrases_studied` | Frasi segnate come studiate |
-
-## Mazzi flashcard
-
-- 👋 Saluti (8 carte)
-- 🗺️ Orientarsi (8 carte)
-- 🥙 Cibo & Bazaar (10 carte)
-- 🚌 Trasporti (8 carte)
-- 🏠 Guesthouse (8 carte)
-- ⛺ Vita Nomade & Yurte (12 carte)
-- 🆘 Emergenze (8 carte)
-
-**Totale: 62 carte**
+1. **Pronuncia** — 6 suoni difficili per italiani + 4 regole + 5 parole segnale in cirillico
+2. **Flashcard** — 62 carte in 7 mazzi con algoritmo SM-2 (spaced repetition)
+3. **Frasi del giorno** — 6 frasi per fase con TTS e tracciamento progresso
+4. **Vita Nomade** — sezione dedicata con russo + parole kirghize (layout ambra)
+5. **Aiuto & Suggerimenti** — guide pre-scritte: pronuncia approfondita, dialoghi reali, numeri/prezzi, cultura e galateo

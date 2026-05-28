@@ -747,100 +747,284 @@ body {
   margin-top: 6px;
 }
 
-/* ─── TAB 5 — Tutor AI ──────────────────────────────────────────────────── */
-.quick-questions { margin-bottom: 16px; }
-.quick-q-label { font-size: 0.82rem; color: var(--gray-500); margin-bottom: 8px; }
-.quick-q-grid { display: flex; flex-direction: column; gap: 6px; }
-.quick-q-btn {
-  width: 100%;
-  text-align: left;
-  padding: 10px 14px;
-  background: #fff;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  color: var(--gray-700);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
-}
-.quick-q-btn:hover { border-color: var(--blue); background: rgba(55,138,221,0.04); color: var(--blue); }
+/* ─── TAB 5 — Aiuto & Suggerimenti — Accordion ──────────────────────────── */
+.accordion { display: flex; flex-direction: column; gap: 8px; }
 
-.chat-container {
+.accordion-item {
   background: #fff;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius);
   overflow: hidden;
-  margin-bottom: 12px;
 }
 
-.chat-messages {
-  height: 300px;
-  overflow-y: auto;
-  padding: 16px;
+.accordion-header {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
   gap: 12px;
+  transition: background 0.15s;
+}
+.accordion-header:hover { background: var(--gray-50); }
+.accordion-item.open .accordion-header { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+
+.accordion-title { font-size: 0.95rem; font-weight: 600; color: var(--gray-900); flex: 1; }
+
+.accordion-icon {
+  font-size: 1.3rem;
+  color: var(--blue);
+  font-weight: 300;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: transform 0.3s;
 }
 
-.chat-welcome {
-  color: var(--gray-500);
-  font-size: 0.88rem;
-  line-height: 1.6;
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.chat-welcome p + p { margin-top: 6px; }
 
-.chat-msg {
-  max-width: 88%;
-  padding: 10px 14px;
+.accordion-content { padding: 16px; }
+
+/* ─── Suoni pronuncia ─────────────────────────────────────────────────────── */
+.aiuto-suono {
+  border: 1px solid var(--gray-200);
   border-radius: var(--radius);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  margin-bottom: 16px;
+  overflow: hidden;
 }
 
-.user-msg {
-  align-self: flex-end;
+.aiuto-suono-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.aiuto-suono-simbolo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--blue);
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 2px 12px;
+  min-width: 56px;
+  text-align: center;
+}
+
+.aiuto-suono-nome { font-size: 0.95rem; font-weight: 600; color: var(--gray-700); }
+
+.aiuto-suono-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+.aiuto-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--blue);
+  margin-top: 4px;
+}
+
+.aiuto-suono-body p { font-size: 0.88rem; color: var(--gray-700); line-height: 1.55; }
+
+.errore-text {
+  color: var(--red) !important;
+  background: var(--red-light);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.aiuto-parole { display: flex; flex-direction: column; gap: 6px; }
+
+.aiuto-parola {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+}
+.aiuto-parola-main { display: flex; flex-direction: column; flex: 1; }
+.aiuto-parola-tr { font-size: 0.9rem; font-weight: 600; color: var(--gray-900); }
+.aiuto-parola-ru { font-size: 0.78rem; color: var(--gray-500); }
+.aiuto-parola-it { font-size: 0.78rem; color: var(--gray-600); flex: 1; }
+
+.aiuto-trucco {
+  font-size: 0.85rem;
+  color: var(--amber-text);
+  background: var(--amber);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  line-height: 1.4;
+}
+
+/* ─── Dialoghi situazioni ─────────────────────────────────────────────────── */
+.aiuto-scenario { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--gray-200); }
+.aiuto-scenario:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.aiuto-scenario-titolo { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.aiuto-scenario-ctx { font-size: 0.85rem; color: var(--gray-500); line-height: 1.5; margin-bottom: 14px; }
+
+.dialogo { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+
+.dialogo-riga {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+}
+.dialogo-tu { background: rgba(55,138,221,0.07); border-left: 3px solid var(--blue); }
+.dialogo-altri { background: var(--gray-50); border-left: 3px solid var(--gray-300); }
+
+.dialogo-chi {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gray-400);
+  min-width: 28px;
+  padding-top: 2px;
+  text-transform: uppercase;
+}
+.dialogo-tu .dialogo-chi { color: var(--blue); }
+
+.dialogo-testo { flex: 1; }
+.dialogo-tr { font-size: 0.9rem; font-weight: 600; color: var(--gray-900); }
+.dialogo-ru { font-size: 0.78rem; color: var(--gray-500); }
+.dialogo-it { font-size: 0.82rem; color: var(--gray-600); font-style: italic; }
+
+.dialogo-nota {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  text-align: center;
+  padding: 4px;
+  font-style: italic;
+}
+
+.aiuto-aspettati {
+  font-size: 0.84rem;
+  color: var(--gray-700);
+  background: var(--green-light);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.aiuto-varianti { margin-top: 8px; }
+.aiuto-variante {
+  display: flex;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 0.84rem;
+}
+.aiuto-variante:last-child { border-bottom: none; }
+.aiuto-variante-tr { font-weight: 600; color: var(--gray-900); flex: 1; }
+.aiuto-variante-it { color: var(--gray-500); flex: 1; font-style: italic; }
+
+/* ─── Numeri e prezzi ─────────────────────────────────────────────────────── */
+.numeri-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+@media (min-width: 400px) { .numeri-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.numero-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  text-align: center;
+}
+.numero-n { font-size: 1.3rem; font-weight: 800; color: var(--blue); }
+.numero-tr { font-size: 0.75rem; font-weight: 600; color: var(--gray-800); }
+.numero-pron { font-size: 0.68rem; color: var(--gray-500); font-style: italic; }
+.numero-note { font-size: 0.65rem; color: var(--gray-400); margin-top: 3px; line-height: 1.3; display: none; }
+@media (min-width: 480px) { .numero-note { display: block; } }
+
+.valute-grid { display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 560px) { .valute-grid { flex-direction: row; } }
+
+.valuta-card {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: 14px;
+  border: 1.5px solid transparent;
+}
+.valuta-kg { background: #f0f4ff; border-color: #c7d8f5; }
+.valuta-uz { background: #fff5e6; border-color: #f5d9a0; }
+
+.valuta-nome { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+.valuta-cambio { font-size: 0.78rem; color: var(--gray-500); margin-bottom: 10px; }
+.valuta-nota { font-size: 0.75rem; color: var(--gray-500); margin-top: 8px; line-height: 1.4; font-style: italic; }
+
+.prezzi-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.prezzi-table tr { border-bottom: 1px solid rgba(0,0,0,0.06); }
+.prezzi-table td { padding: 5px 2px; }
+.prezzi-table td:first-child { color: var(--gray-600); }
+.prezzi-table td:last-child { text-align: right; }
+
+.trattativa-steps { display: flex; flex-direction: column; gap: 12px; }
+
+.trattativa-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.step-numero {
+  width: 28px;
+  height: 28px;
   background: var(--blue);
   color: #fff;
-  border-radius: var(--radius) var(--radius) 4px var(--radius);
-}
-
-.ai-msg {
-  align-self: flex-start;
-  background: var(--gray-100);
-  color: var(--gray-900);
-  border-radius: var(--radius) var(--radius) var(--radius) 4px;
-}
-.ai-msg p { margin: 0; }
-.ai-msg p + p { margin-top: 6px; }
-
-.loading-msg { opacity: 0.6; animation: pulse 1.2s ease-in-out infinite; }
-.error-msg { background: var(--red-light); color: var(--red); }
-
-@keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 0.3; } }
-
-.chat-input-area {
+  border-radius: 50%;
   display: flex;
-  gap: 8px;
-  align-items: flex-end;
-}
-.chat-input {
-  flex: 1;
-  padding: 12px 14px;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius);
-  font-size: 0.95rem;
-  font-family: var(--font);
-  resize: none;
-  transition: border-color 0.15s;
-}
-.chat-input:focus { outline: none; border-color: var(--blue); }
-
-.btn-send {
-  min-height: 48px;
-  width: auto;
-  padding: 0 20px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 700;
   flex-shrink: 0;
 }
+.step-titolo { font-size: 0.88rem; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+.step-frase { font-size: 0.9rem; font-weight: 700; color: var(--blue); margin-bottom: 4px; }
+.step-note { font-size: 0.8rem; color: var(--gray-500); line-height: 1.4; }
+
+/* ─── Cultura e galateo ───────────────────────────────────────────────────── */
+.cultura-sezione { margin-bottom: 20px; }
+.cultura-sezione:last-child { margin-bottom: 0; }
+
+.cultura-titolo { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+
+.cultura-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cultura-list li {
+  font-size: 0.88rem;
+  color: var(--gray-700);
+  line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--gray-300);
+}
+.cultura-list li:has(strong:first-child) { border-left-color: var(--blue); }
 
 /* ─── Session overlay ───────────────────────────────────────────────────── */
 #session-overlay {

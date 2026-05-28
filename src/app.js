@@ -32,7 +32,6 @@ let APP = {
 
 function init() {
   TTS.init();
-  Tutor.init();
 
   // Data di inizio
   let startDate = Storage.get(KEYS.startDate);
@@ -143,7 +142,7 @@ function renderAllTabs() {
   renderFlashcardTab();
   renderFrasiTab();
   renderNomadeTab();
-  renderTutorTab();
+  renderAiutoTab();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -583,113 +582,512 @@ function renderNomadeTab() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// TAB 5 — TUTOR AI
+// TAB 5 — AIUTO & SUGGERIMENTI
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function renderTutorTab() {
-  const container = document.getElementById('tab-tutor');
-
-  const quickQHtml = DATA.quickQuestions.map((q, i) => `
-    <button class="quick-q-btn" onclick="askQuickQuestion(${i})">${q}</button>
-  `).join('');
-
+function renderAiutoTab() {
+  const container = document.getElementById('tab-aiuto');
   container.innerHTML = `
     <div class="section-header">
-      <h2>Tutor AI</h2>
-      <p class="section-subtitle">Fai domande in italiano — risposte con traslitterazione e accento</p>
+      <h2>Aiuto & Suggerimenti</h2>
+      <p class="section-subtitle">Guide pratiche per il tuo viaggio in Kirghizistan e Uzbekistan</p>
     </div>
-
-    <div class="quick-questions">
-      <p class="quick-q-label">Domande rapide:</p>
-      <div class="quick-q-grid">${quickQHtml}</div>
+    <div class="accordion">
+      ${aiutoAccordionItem('acc1', '🔊 Pronuncia approfondita — i 6 suoni', aiutoPronuncia(), true)}
+      ${aiutoAccordionItem('acc2', '💬 Situazioni reali, frase per frase', aiutoSituazioni(), false)}
+      ${aiutoAccordionItem('acc3', '🔢 Numeri, prezzi e trattative', aiutoNumeri(), false)}
+      ${aiutoAccordionItem('acc4', '🤝 Cultura e galateo', aiutoCultura(), false)}
     </div>
+  `;
+}
 
-    <div class="chat-container" id="chat-container">
-      <div class="chat-messages" id="chat-messages">
-        <div class="chat-welcome">
-          <p>Ciao! Sono il tuo tutor di russo per il viaggio in Kirghizistan e Uzbekistan.</p>
-          <p>Chiedimi qualsiasi cosa — pronuncia, frasi utili, come comportarsi nelle yurte, come trattare al bazaar.</p>
-          <p><em>Scrivo sempre con traslitterazione e accento in MAIUSCOLO.</em></p>
+function aiutoAccordionItem(id, title, content, openByDefault) {
+  return `
+    <div class="accordion-item${openByDefault ? ' open' : ''}" id="${id}">
+      <button class="accordion-header" onclick="toggleAccordion(this)" aria-expanded="${openByDefault}">
+        <span class="accordion-title">${title}</span>
+        <span class="accordion-icon">${openByDefault ? '−' : '+'}</span>
+      </button>
+      <div class="accordion-body" style="${openByDefault ? '' : 'max-height:0'}">
+        <div class="accordion-content">${content}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleAccordion(btn) {
+  const item = btn.closest('.accordion-item');
+  const isOpen = item.classList.contains('open');
+
+  // Chiudi tutti
+  document.querySelectorAll('#tab-aiuto .accordion-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.accordion-body').style.maxHeight = '0';
+    i.querySelector('.accordion-icon').textContent = '+';
+    i.querySelector('.accordion-header').setAttribute('aria-expanded', 'false');
+  });
+
+  // Apri quello cliccato se era chiuso
+  if (!isOpen) {
+    item.classList.add('open');
+    const body = item.querySelector('.accordion-body');
+    body.style.maxHeight = body.scrollHeight + 'px';
+    btn.querySelector('.accordion-icon').textContent = '−';
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
+// ─── Contenuto Sezione 1 — Pronuncia approfondita ────────────────────────────
+
+function aiutoPronuncia() {
+  const suoni = [
+    {
+      simbolo: 'Х', nome: 'KH — il raschio gutturale',
+      posizione: 'Solleva la lingua verso il palato morbido — quella zona gommosa che senti toccando il tetto della bocca con la lingua fino in fondo. Tienila quasi a contatto senza toccare. Soffia: l\'aria passa raschiando e produce un suono caldo e gutturale.',
+      confronto: 'Identico al "ch" tedesco di <em>Bach</em> o <em>acht</em>. Simile al "ch" scozzese in <em>loch</em>. Se sei del Sud Italia, pensa alla pronuncia napoletana veloce di "non c\'ho" — quel suono rasposo c\'è dentro.',
+      errore: 'Sostituirlo con una "c" dura italiana (tipo "casa") o con una semplice "k". "Khorosho" diventa incomprensibile se si dice "Korosho" — sembra un\'altra parola.',
+      parole: [
+        { ru: 'Хорошо', tr: 'khoroSHO', it: 'Bene / OK' },
+        { ru: 'Плохо', tr: 'PLOkho', it: 'Male' },
+        { ru: 'Хлеб', tr: 'KHLEB', it: 'Pane' }
+      ],
+      trucco: 'Immagina di avere un capello in gola e vuoi toglierlo discretamente — quel suono soffocato e raschioso è esattamente KH.'
+    },
+    {
+      simbolo: 'Ш', nome: 'SH — lo scivolone scuro',
+      posizione: 'Alza la lingua verso il palato anteriore come per "sci", poi spingila un centimetro più indietro. La lingua si appiattisce a cucchiaio. I bordi toccano i denti laterali superiori. L\'aria scorre sul centro della lingua appiattita.',
+      confronto: 'Simile allo "sh" inglese di <em>shop</em> ma più scuro e posteriore. Il nostro "sc" di <em>sciare</em> è troppo avanzato e leggero — il russo suona più cupo.',
+      errore: 'Usare lo "sc" italiano standard, troppo leggero. In russo Ш suona come un fischio pesante e opaco, non leggero come il nostro.',
+      parole: [
+        { ru: 'Хорошо', tr: 'khoroSHO', it: 'Bene' },
+        { ru: 'Ещё', tr: 'yeshCHYO', it: 'Ancora / Di più' },
+        { ru: 'Шашлык', tr: 'shashLYK', it: 'Spiedino (piatto tipico)' }
+      ],
+      trucco: 'Di\' "scia" come in <em>sciare</em> e immagina che qualcuno ti spinga la lingua indietro di un centimetro — quel suono più opaco e posteriore è SH russo.'
+    },
+    {
+      simbolo: 'Щ', nome: 'SHCH — lo SH con il singhiozzo',
+      posizione: 'Parti dalla posizione SH (lingua a cucchiaio, indietro). Ora aggiungi una piccola tensione extra e allunga il suono. È come uno SH che non finisce subito e aggiunge una piccola strizzata finale simile al "ci" di <em>ciao</em>.',
+      confronto: 'Prova a dire "sci-ci" molto veloce, fondendoli insieme: diventa qualcosa tipo "shchi". È quasi uno SH che non finisce mai e poi aggiunge un\'ombra di CH.',
+      errore: 'Pronunciarlo uguale a SH, ignorando la parte finale, oppure pronunciarlo come due suoni distinti invece di uno fuso e allungato.',
+      parole: [
+        { ru: 'Ещё', tr: 'yeshCHYO', it: 'Ancora — "ещё воды" = ancora acqua' },
+        { ru: 'Борщ', tr: 'BORSHCH', it: 'Borscht (zuppa di barbabietola)' },
+        { ru: 'Овощи', tr: 'OvoshCHI', it: 'Verdure — utile per vegetariani' }
+      ],
+      trucco: 'È uno SH che ha il singhiozzo — parte normale e poi fa una piccola strizzata finale. "Shch... hic!"'
+    },
+    {
+      simbolo: 'Й', nome: 'Y breve — la i che scivola via',
+      posizione: 'Come la "i" italiana ma brevissima e consonantica. La lingua sale verso il palato come per dire "i" e ridiscende immediatamente. Non è una vocale piena — è una scivolata velocissima. Le labbra quasi non si muovono.',
+      confronto: 'La "y" di <em>yogurt</em> in inglese. Oppure la "i" quando dici "ieri" molto veloce — solo quell\'attimo iniziale prima che arrivi la "e".',
+      errore: 'Pronunciarla come una "i" normale lunga. "Chay" (tè) con la "i" allungata suona buffo. Oppure ignorarla del tutto: "Cha" invece di "Chay".',
+      parole: [
+        { ru: 'Чай', tr: 'CHAY', it: 'Tè — offerto ovunque' },
+        { ru: 'Мой', tr: 'MOY', it: 'Mio — "мой паспорт" = il mio passaporto' },
+        { ru: 'Трамвай', tr: 'tramVAY', it: 'Tram — a Tashkent' }
+      ],
+      trucco: 'È la "i" di "ahi!" — non la "i" di "isola". Veloce, appoggiata, poi via. Pensa a un rimbalzo rapido.'
+    },
+    {
+      simbolo: 'Ы', nome: 'Ы — la vocale del pugno allo stomaco',
+      posizione: 'Apri la bocca come per dire "e" (labbra neutre, non tonde). Ora spingi la lingua all\'indietro verso la gola senza alzarla troppo. Tieni le labbra neutre e stese. Il risultato è una vocale scura, opaca, come se venisse da più in fondo.',
+      confronto: 'Non esiste in italiano. Si avvicina al suono "hmm" o "ugh" inglese quando sei sorpreso. Oppure alla vocale francese "eu" di <em>peur</em> ma con la lingua ancora più indietro.',
+      errore: 'Sostituirla con "i" normale. "Вы" (VY = voi/Lei formale) pronunciato come "vi" suona come un\'altra parola. "Рынок" (mercato) pronunciato "Rinok" è incomprensibile.',
+      parole: [
+        { ru: 'Вы', tr: 'VY', it: 'Voi / Lei (forma di rispetto)' },
+        { ru: 'Выход', tr: 'VYkhod', it: 'Uscita — da riconoscere nelle stazioni' },
+        { ru: 'Рынок', tr: 'RYnok', it: 'Mercato' }
+      ],
+      trucco: 'Immagina di mordere un limone: quella smorfia involontaria con la bocca semiaperta e la lingua tirata indietro — la vocale che emetteresti in quel momento è Ы.'
+    },
+    {
+      simbolo: 'Р', nome: 'R vibrante — come al Sud, mai alla francese',
+      posizione: 'La punta della lingua tocca gli alveoli (la cresta subito dietro i denti superiori) e vibra mentre l\'aria passa. Come la "r" toscana, napoletana, siciliana — o spagnola. MAI come la "r" uvulare milanese o francese.',
+      confronto: 'Identica alla "r" di Roma, Napoli, Palermo. Se vieni dal Nord, pensa alla "r" spagnola di <em>perro</em>. Se non riesci a farla vibrare, dì "dr" molto veloce finché la punta della lingua inizia a battere.',
+      errore: 'Usare la "r" uvulare settentrionale o francese (il gorgoglio in fondo alla gola). Per un russo suona stranissimo e rende le parole irriconoscibili.',
+      parole: [
+        { ru: 'Хорошо', tr: 'khoroSHO', it: 'Bene — la R è nella sillaba "ro"' },
+        { ru: 'Рубль', tr: 'RUBL\'', it: 'Rublo — inizia con R' },
+        { ru: 'Рынок', tr: 'RYnok', it: 'Mercato — R + Y: doppia sfida' }
+      ],
+      trucco: 'Di\' "drrrr" come un motorino o un telefono che vibra. Quella vibrazione della punta della lingua è esattamente la R russa. Esercitati sotto la doccia.'
+    }
+  ];
+
+  return suoni.map(s => `
+    <div class="aiuto-suono">
+      <div class="aiuto-suono-header">
+        <span class="aiuto-suono-simbolo">${s.simbolo}</span>
+        <span class="aiuto-suono-nome">${s.nome}</span>
+      </div>
+      <div class="aiuto-suono-body">
+        <div class="aiuto-label">Come posizionarsi</div>
+        <p>${s.posizione}</p>
+        <div class="aiuto-label">Con cosa confrontarlo</div>
+        <p>${s.confronto}</p>
+        <div class="aiuto-label">Errore tipico degli italiani</div>
+        <p class="errore-text">${s.errore}</p>
+        <div class="aiuto-label">3 parole da viaggio per esercitarsi</div>
+        <div class="aiuto-parole">
+          ${s.parole.map(p => `
+            <div class="aiuto-parola">
+              <div class="aiuto-parola-main">
+                <span class="aiuto-parola-tr">${p.tr}</span>
+                <span class="aiuto-parola-ru">${p.ru}</span>
+              </div>
+              <span class="aiuto-parola-it">${p.it}</span>
+              <button class="btn-tts btn-tts-sm" onclick="TTS.speakRussian('${p.ru.replace(/'/g, "\\'")}', {button:this})">▶</button>
+            </div>
+          `).join('')}
+        </div>
+        <div class="aiuto-trucco">💡 ${s.trucco}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Contenuto Sezione 2 — Situazioni reali ──────────────────────────────────
+
+function aiutoSituazioni() {
+  const scenari = [
+    {
+      titolo: '🛒 Contrattare al bazaar',
+      contesto: 'Al bazaar di Samarcanda o Osh il prezzo iniziale è sempre trattabile. La trattativa è un rito sociale — non un conflitto. Il venditore si aspetta che tu tratti.',
+      dialogo: [
+        { chi: 'Tu', tr: 'Skol\'ko stoit?', ru: 'Сколько стоит?', it: 'Quanto costa?' },
+        { chi: 'Ven.', tr: 'Tristat\' dollarov.', ru: 'Тридцать долларов.', it: 'Trenta dollari.' },
+        { chi: 'Tu', tr: 'Dorogo!', ru: 'Дорого!', it: 'Troppo caro!' },
+        { chi: '—', tr: '[Ti allontani lentamente]', ru: '', it: '[Non correre — cammina piano]' },
+        { chi: 'Ven.', tr: 'Dvadtsat\' pyat\'!', ru: 'Двадцать пять!', it: 'Venticinque!' },
+        { chi: 'Tu', tr: 'Dvadtsat\'.', ru: 'Двадцать.', it: 'Venti.' },
+        { chi: 'Ven.', tr: 'Khorosho, beri.', ru: 'Хорошо, бери.', it: 'Va bene, prendilo.' },
+        { chi: 'Tu', tr: 'Spasibo!', ru: 'Спасибо!', it: 'Grazie!' }
+      ],
+      aspettati: 'Il venditore potrebbe non parlare russo — in questo caso usa gesti e la calcolatrice del telefono. Mostra il numero che sei disposto a pagare.',
+      varianti: [
+        { tr: 'Mozhno deshevle?', it: 'Si può a meno?' },
+        { tr: 'Pokazhite drugoy.', it: 'Mostrami un altro.' },
+        { tr: 'Ya podumayu.', it: 'Ci penso. (per guadagnare tempo)' }
+      ]
+    },
+    {
+      titolo: '🚌 Prendere una marshrutka',
+      contesto: 'La marshrutka (minibus condiviso) è il mezzo principale in Asia Centrale. Si paga direttamente all\'autista o al bigliettaio, di solito alla fine del viaggio.',
+      dialogo: [
+        { chi: 'Tu', tr: 'Do Osha?', ru: 'До Оша?', it: 'Per Osh?' },
+        { chi: 'Aut.', tr: 'Da, sadi\'s\'.', ru: 'Да, садись.', it: 'Sì, siediti.' },
+        { chi: 'Tu', tr: 'Skol\'ko?', ru: 'Сколько?', it: 'Quanto costa?' },
+        { chi: 'Aut.', tr: 'Pyat\'desyat som.', ru: 'Пятьдесят сом.', it: 'Cinquanta som.' },
+        { chi: '—', tr: '[Durante il viaggio]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Ostanovite zdes\'!', ru: 'Остановите здесь!', it: 'Si fermi qui!' },
+        { chi: 'Aut.', tr: 'Khorosho.', ru: 'Хорошо.', it: 'Ok.' }
+      ],
+      aspettati: 'La marshrutka parte quando è piena, non a orario fisso. L\'attesa può essere da 5 minuti a un\'ora. Il percorso è fisso ma puoi scendere dove vuoi.',
+      varianti: [
+        { tr: 'Yest\' mesta?', it: 'Ci sono posti?' },
+        { tr: 'Kogda vykhodit?', it: 'Quando parte?' },
+        { tr: 'Buku, pozhaluysta.', it: 'Bussate (sul vetro) per scendere.' }
+      ]
+    },
+    {
+      titolo: '🏠 Check-in in guesthouse',
+      contesto: 'Le guesthouse locali sono economiche e accoglienti. Il proprietario spesso parla pochissimo inglese. Il passaporto va lasciato per la registrazione — è obbligatorio per legge.',
+      dialogo: [
+        { chi: 'Tu', tr: 'Zdravstvuyte! U vas yest\' svobodnye nomera?', ru: 'Здравствуйте! У вас есть свободные номера?', it: 'Buongiorno! Avete camere libere?' },
+        { chi: 'Gest.', tr: 'Da, yest\'. Skol\'ko nochey?', ru: 'Да, есть. Сколько ночей?', it: 'Sì. Quante notti?' },
+        { chi: 'Tu', tr: 'Dve nochi. Skol\'ko stoit?', ru: 'Две ночи. Сколько стоит?', it: 'Due notti. Quanto costa?' },
+        { chi: 'Gest.', tr: 'Tysyacha som v noch\'.', ru: 'Тысяча сом в ночь.', it: 'Mille som a notte.' },
+        { chi: 'Tu', tr: 'Yest\' li dush? Goryachaya voda?', ru: 'Есть ли душ? Горячая вода?', it: 'C\'è la doccia? Acqua calda?' },
+        { chi: 'Gest.', tr: 'Da, yest\'. Zavtrak vkhodit.', ru: 'Да, есть. Завтрак входит.', it: 'Sì, c\'è. La colazione è inclusa.' },
+        { chi: 'Tu', tr: 'Khorosho, beru. Vot pasport.', ru: 'Хорошо, беру. Вот паспорт.', it: 'Bene, la prendo. Ecco il passaporto.' }
+      ],
+      aspettati: 'Spesso il gestore scatta una foto del passaporto con il telefono per la registrazione. Te lo restituisce subito o la mattina dopo. La doccia calda potrebbe essere disponibile solo a certe ore.',
+      varianti: [
+        { tr: 'Yest\' li wifi? Kakoy parol\'?', it: 'C\'è wifi? Qual è la password?' },
+        { tr: 'V kotorom chasu zavtrak?', it: 'A che ora è la colazione?' },
+        { tr: 'Mozhno ostavit\' bagaj?', it: 'Posso lasciare i bagagli?' }
+      ]
+    },
+    {
+      titolo: '🍽️ Ordinare senza menu italiano',
+      contesto: 'Quasi nessun ristorante locale ha il menu in italiano o inglese. Il menù spesso non esiste affatto — il cameriere ti dice cosa c\'è oggi. Funziona benissimo.',
+      dialogo: [
+        { chi: 'Tu', tr: 'Chto u vas yest\'?', ru: 'Что у вас есть?', it: 'Cosa avete?' },
+        { chi: 'Cam.', tr: 'Plov, shashlik, lagman, samsa.', ru: 'Плов, шашлык, лагман, самса.', it: 'Plov, shashlik, lagman, samsa.' },
+        { chi: 'Tu', tr: 'Chto takoe lagman?', ru: 'Что такое лагман?', it: 'Cos\'è il lagman?' },
+        { chi: 'Cam.', tr: 'Sup s lapshoy i myasom.', ru: 'Суп с лапшой и мясом.', it: 'Zuppa con pasta e carne.' },
+        { chi: 'Tu', tr: 'Ya ne yem myaso. Bez myasa mozhno?', ru: 'Я не ем мясо. Без мяса можно?', it: 'Non mangio carne. Si può senza carne?' },
+        { chi: 'Cam.', tr: 'Mozhno, da.', ru: 'Можно, да.', it: 'Sì, si può.' },
+        { chi: 'Tu', tr: 'Togda lagman bez myasa. I chay, pozhaluysta.', ru: 'Тогда лагман без мяса. И чай, пожалуйста.', it: 'Allora lagman senza carne. E un tè.' },
+        { chi: '—', tr: '[Alla fine]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Schot, pozhaluysta.', ru: 'Счёт, пожалуйста.', it: 'Il conto.' }
+      ],
+      aspettati: 'Il tè arriva sempre — verde o nero. I piatti principali tipici sono plov (riso con carne), shashlik (spiedini), lagman (zuppa con pasta), samsa (sfoglia ripiena). Quasi tutto contiene carne.',
+      varianti: [
+        { tr: 'Bez luka, pozhaluysta.', it: 'Senza cipolla.' },
+        { tr: 'Ochen\' vkusno!', it: 'Buonissimo! (dillo sempre)' },
+        { tr: 'Chto vy rekomenduete?', it: 'Cosa raccomanda?' }
+      ]
+    },
+    {
+      titolo: '⛺ Arrivare in una yurta nomade',
+      contesto: 'Nelle montagne kirghize passerai notti con famiglie nomadi. Il rituale dell\'arrivo è importante — queste frasi ti fanno entrare nel cuore della famiglia.',
+      dialogo: [
+        { chi: 'Tu', tr: 'Mozhno voyti?', ru: 'Можно войти?', it: '(bussando) Posso entrare?' },
+        { chi: 'Fam.', tr: 'Da-da, zakhodite!', ru: 'Да-да, заходите!', it: 'Sì, sì, entrate!' },
+        { chi: 'Tu', tr: 'Zdravstvuyte! Spasibo za gostepriimstvo.', ru: 'Здравствуйте! Спасибо за гостеприимство.', it: 'Buonasera! Grazie per l\'ospitalità.' },
+        { chi: 'Fam.', tr: 'Sadites\', pozhaluysta. Chay budete?', ru: 'Садитесь, пожалуйста. Чай будете?', it: 'Siedetevi. Volete il tè?' },
+        { chi: 'Tu', tr: 'Da, spasibo. Ochen\' krasivo zdes\'!', ru: 'Да, спасибо. Очень красиво здесь!', it: 'Sì, grazie. È molto bello qui!' },
+        { chi: '—', tr: '[A cena]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Ochen\' vkusno! Chto eto?', ru: 'Очень вкусно! Что это?', it: 'Buonissimo! Cos\'è questo?' },
+        { chi: 'Fam.', tr: 'Eto beshbarmak.', ru: 'Это бешбармак.', it: 'È il beshbarmak.' },
+        { chi: 'Tu', tr: 'Mozhno yeshchyo?', ru: 'Можно ещё?', it: 'Posso averne ancora?' },
+        { chi: '—', tr: '[La sera prima di dormire]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Spasibo za gostepriimstvo. Spokoinoy nochi.', ru: 'Спасибо за гостеприимство. Спокойной ночи.', it: 'Grazie per l\'ospitalità. Buonanotte.' }
+      ],
+      aspettati: 'La famiglia ti offrirà kumis (latte di giumenta fermentato) e kurt (palline di formaggio secco). Accetta almeno un sorso — rifiutare è scortese. La cena è tardi, spesso intorno alle 21.',
+      varianti: [
+        { tr: 'U menya yest\' spalnyy meshok.', it: 'Ho il sacco a pelo.' },
+        { tr: 'Kogda vykhodit\' zavtra?', it: 'A che ora si parte domani?' },
+        { tr: 'Kholodno nochyu.', it: 'Di notte fa freddo.' }
+      ]
+    },
+    {
+      titolo: '🆘 Non capisco — chiedere aiuto',
+      contesto: 'Capiterà spesso di non capire nulla. Queste frasi ti salvano in ogni situazione — dalla stazione agli angoli di strada.',
+      dialogo: [
+        { chi: '—', tr: '[Qualcuno parla veloce]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Izvinite, ya ne ponimayu.', ru: 'Извините, я не понимаю.', it: 'Scusi, non capisco.' },
+        { chi: 'Tu', tr: 'Pozhaluysta, pomédlennee.', ru: 'Пожалуйста, помедленнее.', it: 'Per favore, più lentamente.' },
+        { chi: '—', tr: '[Se ancora non capisce]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Mozhno napisat\'?', ru: 'Можно написать?', it: 'Può scrivere?' },
+        { chi: '—', tr: '[Mostra il telefono con Google Translate]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Pozhaluysta, napishite zdes\'.', ru: 'Пожалуйста, напишите здесь.', it: 'Scriva qui.' },
+        { chi: '—', tr: '[Se cerchi qualcuno che parla inglese]', ru: '', it: '' },
+        { chi: 'Tu', tr: 'Vy govorite po-angliyski?', ru: 'Вы говорите по-английски?', it: 'Parla inglese?' }
+      ],
+      aspettati: 'La maggior parte delle persone rallenta e semplifica se lo chiedi. I giovani (under 30) spesso capiscono qualcosa di inglese. Il telefono con Google Translate + fotocamera è lo strumento numero uno.',
+      varianti: [
+        { tr: 'Povtorite, pozhaluysta.', it: 'Ripeta, per favore.' },
+        { tr: 'Ya ne govoryu po-russki khorosho.', it: 'Non parlo bene il russo.' },
+        { tr: 'Ya italyanets / italyanka.', it: 'Sono italiano / italiana.' }
+      ]
+    }
+  ];
+
+  return scenari.map(s => `
+    <div class="aiuto-scenario">
+      <h4 class="aiuto-scenario-titolo">${s.titolo}</h4>
+      <p class="aiuto-scenario-ctx">${s.contesto}</p>
+      <div class="dialogo">
+        ${s.dialogo.map(r => r.ru ? `
+          <div class="dialogo-riga ${r.chi === 'Tu' ? 'dialogo-tu' : 'dialogo-altri'}">
+            <span class="dialogo-chi">${r.chi}</span>
+            <div class="dialogo-testo">
+              <div class="dialogo-tr">${r.tr}</div>
+              <div class="dialogo-ru">${r.ru}</div>
+              <div class="dialogo-it">${r.it}</div>
+            </div>
+            <button class="btn-tts btn-tts-sm" onclick="TTS.speakRussian('${r.ru.replace(/'/g, "\\'")}', {button:this})">▶</button>
+          </div>
+        ` : `<div class="dialogo-nota">${r.it}</div>`).join('')}
+      </div>
+      <div class="aiuto-aspettati"><strong>Cosa aspettarsi:</strong> ${s.aspettati}</div>
+      <div class="aiuto-varianti">
+        <div class="aiuto-label">Varianti utili</div>
+        ${s.varianti.map(v => `
+          <div class="aiuto-variante">
+            <span class="aiuto-variante-tr">${v.tr}</span>
+            <span class="aiuto-variante-it">${v.it}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Contenuto Sezione 3 — Numeri, prezzi, trattative ────────────────────────
+
+function aiutoNumeri() {
+  return `
+    <div class="aiuto-numeri">
+
+      <div class="aiuto-label">Numeri da 1 a 20 — con trucchi mnemonici</div>
+      <div class="numeri-grid">
+        ${[
+          ['1', 'odin', 'oh-DEEN', 'Come "oh, deen!"'],
+          ['2', 'dva', 'DVAH', 'Come "dva" in tedesco'],
+          ['3', 'tri', 'TREE', 'Come l\'inglese "tree"'],
+          ['4', 'chetyre', 'cheh-TY-ree', 'Suona come "che tiri"'],
+          ['5', 'pyat\'', 'PYAT\'', 'Come "piat" in italiano antico'],
+          ['6', 'shest\'', 'SHEST\'', 'SH + est'],
+          ['7', 'sem\'', 'SEM\'', 'Quasi come "sette"'],
+          ['8', 'vosem\'', 'VO-sem\'', 'VO + sem'],
+          ['9', 'devyat\'', 'DYEH-vyat\'', 'DEV + yat'],
+          ['10', 'desyat\'', 'DYEH-syat\'', 'Quasi "dieci" slavizzato'],
+          ['11', 'odinnadtsat\'', 'a-DEEN-nat-sat\'', 'Veloce: "odiNNATsat"'],
+          ['12', 'dvenadtsat\'', 'dvee-NAT-sat\'', '"Dvenadtsat" in un respiro'],
+          ['15', 'pyatnadtsat\'', 'pyat-NAT-sat\'', 'pyat + nadtsat'],
+          ['20', 'dvadtsat\'', 'DVAT-sat\'', 'Il più usato al bazaar'],
+          ['30', 'tridtsat\'', 'TREET-sat\'', 'tri + dtsat'],
+          ['40', 'sorok', 'SO-rok', 'Irregolare — memorizzalo!'],
+          ['50', 'pyat\'desyat', 'pyat-dee-SYAT', '"cinque-decine"'],
+          ['100', 'sto', 'STOH', 'Breve e facile'],
+          ['1000', 'tysyacha', 'TY-syah-cha', 'Per i prezzi uzbeki']
+        ].map(([n, tr, pron, note]) => `
+          <div class="numero-card">
+            <div class="numero-n">${n}</div>
+            <div class="numero-tr">${tr}</div>
+            <div class="numero-pron">[${pron}]</div>
+            <div class="numero-note">${note}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="aiuto-label" style="margin-top:20px">Valute — come orientarsi</div>
+      <div class="valute-grid">
+        <div class="valuta-card valuta-kg">
+          <div class="valuta-nome">🇰🇬 Som kirghizo (KGS)</div>
+          <div class="valuta-cambio">≈ 100 som = 1 €</div>
+          <table class="prezzi-table">
+            <tr><td>Marshrutka locale</td><td><strong>20–50 som</strong></td></tr>
+            <tr><td>Taxi in città</td><td><strong>150–400 som</strong></td></tr>
+            <tr><td>Pasto in teahouse</td><td><strong>150–400 som</strong></td></tr>
+            <tr><td>Notte guesthouse</td><td><strong>800–1500 som</strong></td></tr>
+            <tr><td>Acqua (1.5L)</td><td><strong>50–80 som</strong></td></tr>
+            <tr><td>Yurta (con pasti)</td><td><strong>2000–4000 som</strong></td></tr>
+          </table>
+        </div>
+        <div class="valuta-card valuta-uz">
+          <div class="valuta-nome">🇺🇿 Som uzbeko (UZS)</div>
+          <div class="valuta-cambio">≈ 13.000 som = 1 €</div>
+          <table class="prezzi-table">
+            <tr><td>Taxi in città</td><td><strong>20–50 mila</strong></td></tr>
+            <tr><td>Pasto locale</td><td><strong>30–80 mila</strong></td></tr>
+            <tr><td>Notte guesthouse</td><td><strong>100–300 mila</strong></td></tr>
+            <tr><td>Ingresso museo</td><td><strong>30–80 mila</strong></td></tr>
+            <tr><td>Acqua (1.5L)</td><td><strong>5–10 mila</strong></td></tr>
+            <tr><td>Plov al ristorante</td><td><strong>30–60 mila</strong></td></tr>
+          </table>
+          <div class="valuta-nota">In Uzbekistan si parla di migliaia — non spaventarti se senti "dvadtsat\' tysyach" (20 mila) per un taxi.</div>
+        </div>
+      </div>
+
+      <div class="aiuto-label" style="margin-top:20px">Script completo di trattativa al bazaar</div>
+      <div class="trattativa-steps">
+        <div class="trattativa-step">
+          <div class="step-numero">1</div>
+          <div class="step-content">
+            <div class="step-titolo">Chiedi il prezzo senza emozioni</div>
+            <div class="step-frase">"Skol\'ko stoit?" (Сколько стоит?)</div>
+            <div class="step-note">Voce neutra. Non mostrare entusiasmo per l\'oggetto — se ti vede emozionato, il prezzo sale.</div>
+          </div>
+        </div>
+        <div class="trattativa-step">
+          <div class="step-numero">2</div>
+          <div class="step-content">
+            <div class="step-titolo">Reagisci con sorpresa/dispiacere</div>
+            <div class="step-frase">"Dorogo!" (Дорого!) — "Ochen\' dorogo!" (Очень дорого!)</div>
+            <div class="step-note">Scuoti la testa. Non arrabbiarti, sorriditi anche — è un gioco che entrambi conoscono.</div>
+          </div>
+        </div>
+        <div class="trattativa-step">
+          <div class="step-numero">3</div>
+          <div class="step-content">
+            <div class="step-titolo">Fai una controproposta (50-60% del prezzo iniziale)</div>
+            <div class="step-frase">"Dvadtsat\' dollarov?" (Двадцать долларов?) — mostra il numero sul telefono</div>
+            <div class="step-note">Usa la calcolatrice del telefono per mostrare il prezzo — evita ambiguità linguistiche.</div>
+          </div>
+        </div>
+        <div class="trattativa-step">
+          <div class="step-numero">4</div>
+          <div class="step-content">
+            <div class="step-titolo">Il trucco del "vado via"</div>
+            <div class="step-frase">[inizia ad allontanarti lentamente, senza fretta]</div>
+            <div class="step-note">Nella maggior parte dei casi il venditore ti richiama con un prezzo più basso. Se non lo fa, l\'articolo valeva davvero quello.</div>
+          </div>
+        </div>
+        <div class="trattativa-step">
+          <div class="step-numero">5</div>
+          <div class="step-content">
+            <div class="step-titolo">Chiudi con eleganza</div>
+            <div class="step-frase">"Khorosho, beru." (Хорошо, беру.) — Va bene, lo prendo.</div>
+            <div class="step-note">Stretta di mano, sorriso, grazie. Il venditore non è un nemico — è un partner del rito.</div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="chat-input-area">
-      <textarea id="chat-input" class="chat-input" placeholder="Scrivi la tua domanda in italiano..." rows="2"></textarea>
-      <button class="btn-primary btn-send" id="btn-send" onclick="sendTutorMessage()">Chiedi</button>
-    </div>
   `;
+}
 
-  // Enter per inviare (Shift+Enter per newline)
-  const input = document.getElementById('chat-input');
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendTutorMessage();
+// ─── Contenuto Sezione 4 — Cultura e galateo ─────────────────────────────────
+
+function aiutoCultura() {
+  const sezioni = [
+    {
+      titolo: '⛺ Nella yurta nomade',
+      items: [
+        '<strong>Bussa sempre prima di entrare</strong> — anche se la porta è aperta. Di\' "Mozhno voyti?" e aspetta "Zakhodite!" (Entrate!).',
+        '<strong>Entra con il piede destro</strong> — è una tradizione. Non è rigidissima ma i nomadi anziani la apprezzano.',
+        '<strong>Non passare davanti all\'anziano della famiglia</strong> o tra lui e il fuoco centrale. Gira attorno.',
+        '<strong>Siediti dove ti indicano</strong> — non scegliere da solo il posto. Gli ospiti siedono di solito di fronte alla porta.',
+        '<strong>Il kumis si accetta</strong> (latte di giumenta fermentato). Anche solo un sorso, anche se è acido. Rifiutare direttamente è scortese. Se non riesci, toccalo con le labbra e sorridi.',
+        '<strong>Non rifiutare mai il tè</strong> — almeno tienilo in mano. La tazza si tiene con entrambe le mani o con la destra come segno di rispetto.',
+        '<strong>Porta un piccolo dono</strong>: caramelle, cioccolato, frutta. Non costoso — il gesto conta più del valore.',
+        '<strong>La cena è tardi</strong>, spesso tra le 20 e le 22. Adattati ai ritmi — non chiedere di mangiare prima.'
+      ]
+    },
+    {
+      titolo: '🛒 Al bazaar',
+      items: [
+        '<strong>Trattare è obbligatorio</strong> — non è scortese, è parte della transazione. Se accetti il primo prezzo, il venditore pensa che hai pagato troppo e anche tu hai perso un rito sociale.',
+        '<strong>Non toccare la frutta e la verdura</strong> del venditore senza permesso. Indica e lui ti darà lui. Se vuoi scegliere tu, chiedi prima.',
+        '<strong>Fotografare le persone: chiedi sempre</strong>. Di\' "Mozhno sfotografirovat\'?" e mostra la fotocamera. Mostra poi la foto — fa sempre piacere.',
+        '<strong>Non fotografare militari, polizia, edifici governativi, confini</strong>. In Asia Centrale è una regola da prendere sul serio.',
+        '<strong>Al "no" di un venditore non insistere</strong> — passa al banco successivo. Ce ne sono sempre altri simili.'
+      ]
+    },
+    {
+      titolo: '🏠 In guesthouse',
+      items: [
+        '<strong>Togli le scarpe all\'ingresso</strong> — cerca il muccchio di scarpe vicino alla porta. È sempre così nelle case private.',
+        '<strong>Il proprietario spesso cena con te</strong> — partecipa alla conversazione anche con pochissimo russo. Un sorriso e "ochen\' vkusno!" fanno molto.',
+        '<strong>Orario di rientro</strong>: chiedi sempre. Molte guesthouse chiudono il portone dopo le 23. "V kotorom chasu zakryvayetsya?" = A che ora chiudete?',
+        '<strong>Lasciare il passaporto</strong> per la registrazione è normale e obbligatorio per legge. Il gestore ne farà una copia o una foto e te lo ridà subito o la mattina.'
+      ]
+    },
+    {
+      titolo: '🕌 Moschee e luoghi sacri (Uzbekistan)',
+      items: [
+        '<strong>Abbigliamento</strong>: spalle coperte, gambe coperte sotto il ginocchio per tutti. Le donne coprano i capelli all\'interno.',
+        '<strong>Togli le scarpe</strong> all\'ingresso — segui l\'esempio degli altri visitatori. C\'è sempre un posto dove lasciarle.',
+        '<strong>Durante la preghiera</strong> non entrare — aspetta fuori. I cinque momenti di preghiera sono all\'alba, a mezzogiorno, nel pomeriggio, al tramonto, di sera.',
+        '<strong>Foto dell\'interno</strong>: generalmente consentite. Foto di persone che pregano: no, mai.',
+        '<strong>Mostra rispetto visibile</strong>: non mangiare, non parlare ad alta voce, non fare telefonate. Anche se non sei credente, il rispetto è sempre apprezzato.'
+      ]
+    },
+    {
+      titolo: '🤲 Ospitalità generale',
+      items: [
+        '"<strong>Poydem chay pit\'</strong>" (andiamo a bere il tè) è un invito sociale importante — non è solo tè, è conversazione, amicizia, fiducia. Accettalo quando puoi.',
+        '<strong>Non pulire il piatto completamente</strong> se non vuoi altra roba. Un po\' di cibo nel piatto segnala "sono sazio, grazie". Il piatto vuoto = ne voglio ancora.',
+        '<strong>Mangia con la mano destra</strong> — la sinistra è considerata impura nella cultura islamica. Anche se sei mancino, usa la destra per toccare il cibo.',
+        '<strong>Se non capisci nulla e tutti ridono</strong>: ridi con loro. Nella grande maggioranza dei casi è un\'atmosfera amichevole, non si ride di te.',
+        '<strong>Non parlare di politica</strong> (Russia, USA, Cina, questioni territoriali). Non ne sai abbastanza del contesto locale e potresti creare imbarazzo.',
+        '<strong>"Ya iz Italii"</strong> (Sono italiano/a) apre quasi sempre porte — l\'Italia è vista positivamente in tutta la regione. Usalo!'
+      ]
     }
-  });
-}
+  ];
 
-function askQuickQuestion(index) {
-  const question = DATA.quickQuestions[index];
-  const input = document.getElementById('chat-input');
-  if (input) {
-    input.value = question;
-    sendTutorMessage();
-  }
-}
-
-async function sendTutorMessage() {
-  const input = document.getElementById('chat-input');
-  const messages = document.getElementById('chat-messages');
-  const sendBtn = document.getElementById('btn-send');
-  if (!input || !messages) return;
-
-  const text = input.value.trim();
-  if (!text || Tutor.isLoading) return;
-
-  input.value = '';
-  sendBtn.disabled = true;
-  sendBtn.textContent = '...';
-
-  // Aggiungi messaggio utente
-  const userDiv = document.createElement('div');
-  userDiv.className = 'chat-msg user-msg';
-  userDiv.textContent = text;
-  messages.appendChild(userDiv);
-  messages.scrollTop = messages.scrollHeight;
-
-  // Indicatore di caricamento
-  const loadingDiv = document.createElement('div');
-  loadingDiv.className = 'chat-msg ai-msg loading-msg';
-  loadingDiv.textContent = '...';
-  messages.appendChild(loadingDiv);
-  messages.scrollTop = messages.scrollHeight;
-
-  try {
-    const response = await Tutor.send(text);
-    loadingDiv.classList.remove('loading-msg');
-    loadingDiv.innerHTML = formatTutorResponse(response);
-  } catch (err) {
-    loadingDiv.classList.remove('loading-msg');
-    loadingDiv.classList.add('error-msg');
-    loadingDiv.textContent = `Errore: ${err.message}. Controlla che il server sia avviato e ANTHROPIC_API_KEY sia configurata.`;
-  } finally {
-    sendBtn.disabled = false;
-    sendBtn.textContent = 'Chiedi';
-    messages.scrollTop = messages.scrollHeight;
-  }
-}
-
-function formatTutorResponse(text) {
-  // Formatta la risposta: parole in MAIUSCOLO → evidenziate come accento tonico
-  return text
-    .split('\n')
-    .map(line => `<p>${line
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    }</p>`)
-    .join('');
+  return sezioni.map(s => `
+    <div class="cultura-sezione">
+      <h4 class="cultura-titolo">${s.titolo}</h4>
+      <ul class="cultura-list">
+        ${s.items.map(item => `<li>${item}</li>`).join('')}
+      </ul>
+    </div>
+  `).join('');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
